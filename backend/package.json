@@ -1,0 +1,19 @@
+{
+  "name": "appsalon_mevn_backend",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Backend de AppSalon",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "author": "Victor Moises",
+  "license": "ISC",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.2",
+    "mongoose": "^8.2.0",
+    "nodemon": "^3.1.0"
+  }
+}
