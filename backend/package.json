@@ -5,7 +5,9 @@
   "description": "Backend de AppSalon",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "seed:import": "node data/seed.js --import",
+    "seed:destroy": "node data/seed.js --destroy"
   },
   "author": "Victor Moises",
   "license": "ISC",
