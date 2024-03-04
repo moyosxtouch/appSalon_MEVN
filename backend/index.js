@@ -3,6 +3,7 @@ import { db } from "./config/db.js";
 import colors from "colors";
 import cors from "cors";
 import servicesRoutes from "./routes/servicesRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 import dotenv from "dotenv";
 //variables de entorno
 dotenv.config();
@@ -31,6 +32,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 //Definir una ruta
 app.use("/api/services", servicesRoutes);
+app.use("/api/auth", authRoutes);
 //Definir el puerto
 const PORT = process.env.PORT || 4000;
 //Arrancar la App

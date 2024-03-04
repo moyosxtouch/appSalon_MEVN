@@ -13,7 +13,7 @@ export default {
         app: 'url("/img/1.jpg")',
       },
       colors: {
-        "vtd-primary": colors.blue,
+        "vtd-primary": colors.violet,
       },
     },
   },
