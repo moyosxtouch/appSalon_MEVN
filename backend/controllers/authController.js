@@ -27,8 +27,13 @@ const register = async (req, res) => {
 
   try {
     const user = new User(req.body);
-    await user.save();
-    sendEmailVerification();
+    const result = await user.save();
+    const { name, email, token } = result;
+    sendEmailVerification({
+      name,
+      email,
+      token,
+    });
     res.json({
       msg: "El usuario se creo correctamente, revisa tu email",
     });
@@ -36,4 +41,44 @@ const register = async (req, res) => {
     console.log(error);
   }
 };
-export { register };
+const verifyAccount = async (req, res) => {
+  const { token } = req.params;
+  const user = await User.findOne({ token });
+  if (!user) {
+    const error = new Error("Hubo un error, token no valido");
+    return res.status(401).json({ msg: error.message });
+  }
+  //Si el token es valido, confirmar la cuenta
+  try {
+    user.verified = true;
+    user.token = "";
+    await user.save();
+    res.json({ msg: "Usuario Confirmado Correctamente" });
+  } catch (error) {
+    console.log(error);
+  }
+};
+const login = async (req, res) => {
+  const { email, password } = req.body;
+  //Revisar que el usuario exista
+  const user = await User.findOne({ email });
+  if (!user) {
+    const error = new Error("El usuario no existe");
+    return res.status(401).json({ msg: error.message });
+  }
+  //Revisar si el usuario confirmo su cuenta
+  if (!user.verified) {
+    const error = new Error("Tu cuenta no ha sido confirmada aún");
+    return res.status(401).json({ msg: error.message });
+  }
+  //Comprobar el password
+  if (await user.checkPassword(password)) {
+    res.json({
+      msg: "Usuario Autenticado",
+    });
+  } else {
+    const error = new Error("El password es incorrecto");
+    return res.status(401).json({ msg: error.message });
+  }
+};
+export { register, verifyAccount, login };

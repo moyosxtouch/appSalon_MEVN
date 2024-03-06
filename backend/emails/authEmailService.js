@@ -1,5 +1,5 @@
 import { createTransport } from "../config/nodemailer.js";
-export async function sendEmailVerification() {
+export async function sendEmailVerification({ name, email, token }) {
   const transporter = createTransport(
     "sandbox.smtp.mailtrap.io",
     2525,
@@ -9,10 +9,14 @@ export async function sendEmailVerification() {
   //Enviar el email
   const info = await transporter.sendMail({
     from: "Moyos Barbery",
-    to: "moyosxtouch@outlook.com",
+    to: email,
     subject: "MoyosBarbery - Confirma tu cuenta",
     text: "MoyosBarbery - Confirma tu cuenta",
-    html: "test email",
+    html: `<p>Hola: ${name}, confirma tu cuenta en Moyos Barbery </p>
+    <p>Tu cuenta esta casi lista, solo debes confirmarla en el siguiente enlace</p>
+    <a href="http://localhost:4000/api/auth/verify/${token}">Confirmar cuenta </a>
+    <p>Si tu no creaste esta cuenta, puedes ignorar este mensaje</p>
+    `,
   });
   console.log("mensaje enviado", info.messageId);
 }
