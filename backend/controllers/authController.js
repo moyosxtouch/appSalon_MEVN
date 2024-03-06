@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import { sendEmailVerification } from "../emails/authEmailService.js";
 const register = async (req, res) => {
   //valida todos los campos obligatorios
 
@@ -27,6 +28,7 @@ const register = async (req, res) => {
   try {
     const user = new User(req.body);
     await user.save();
+    sendEmailVerification();
     res.json({
       msg: "El usuario se creo correctamente, revisa tu email",
     });
