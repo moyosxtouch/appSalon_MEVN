@@ -1,6 +1,8 @@
 <script setup>
 import AuthAPI from "@/api/AuthAPI.js";
 import { inject } from "vue";
+import { reset } from "@formkit/vue";
+import { FormKit } from "@formkit/vue";
 const toast = inject("toast");
 
 const handleSubmit = async ({ password_confirm, ...formData }) => {
@@ -10,8 +12,12 @@ const handleSubmit = async ({ password_confirm, ...formData }) => {
       message: data.msg,
       type: "success",
     });
+    reset("registerForm");
   } catch (error) {
-    console.log(error);
+    toast.open({
+      message: error.response.data.msg,
+      type: "error",
+    });
   }
 };
 </script>
@@ -24,6 +30,7 @@ const handleSubmit = async ({ password_confirm, ...formData }) => {
     Crea una cuenta en MoyosBarbery
   </p>
   <FormKit
+    id="registerForm"
     type="form"
     :actions="false"
     incomplete-message="No se pudo enviar, revisa las notificaciones"

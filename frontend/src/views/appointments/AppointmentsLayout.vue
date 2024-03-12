@@ -14,11 +14,12 @@
         </button>
       </div>
       <nav class="flex gap-2 items-center justify-end">
-        <button
+        <RouterLink
+          :to="{ name: 'my-appointments' }"
           class="p-3 text-gray-200 uppercase text-xs font-black rounded-lg"
         >
           Mis Citas
-        </button>
+        </RouterLink>
         <RouterLink
           :to="{ name: 'new-appointment' }"
           class="p-3 text-gray-200 uppercase text-xs font-black rounded-lg bg-blue-600 hover:bg-blue-700"
