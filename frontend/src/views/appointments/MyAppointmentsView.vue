@@ -1,4 +1,7 @@
-<script setup></script>
+<script setup>
+import { useUserStore } from "@/stores/user";
+const user = useUserStore();
+</script>
 
 <template>
   <h2 class="text-4xl font-extrabold text-white mt-10">Mis Citas</h2>
