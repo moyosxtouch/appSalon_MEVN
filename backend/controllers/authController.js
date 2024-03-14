@@ -84,4 +84,7 @@ const login = async (req, res) => {
     return res.status(401).json({ msg: error.message });
   }
 };
-export { register, verifyAccount, login };
+const user = async (req, res) => {
+  console.log("desde user");
+};
+export { register, verifyAccount, login, user };
