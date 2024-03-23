@@ -37,9 +37,13 @@ const getAppointmentById = async (req, res) => {
   //validar por object id
   if (validateObjectId(id, res)) return;
   //validar que exista
-  const appointment = await Appointment.findById(id);
+  const appointment = await Appointment.findById(id).populate("services");
   if (!appointment) {
     return handleNotFoundError("La Cita no existe", res);
+  }
+  if (appointment.user.toString() !== req.user._id.toString()) {
+    const error = new Error("no tienes los permisos");
+    return res.status(403).json({ msg: error.message });
   }
   //Retornar la cita
   res.json(appointment);

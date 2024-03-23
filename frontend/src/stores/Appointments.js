@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref, computed, onMounted, inject, watch } from "vue";
 import AppointmentAPI from "@/api/AppointmentAPI";
-import { convertToISO } from "@/helpers/date";
+import { convertToISO, convertToDDMMYYYY } from "@/helpers/date";
 import { useRouter } from "vue-router";
 export const useAppointmentsStore = defineStore("appointments", () => {
   const services = ref([]);
@@ -9,6 +9,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
   const time = ref("");
   const hours = ref([]);
   const toast = inject("toast");
+  const appointmentId = ref("");
   const router = useRouter();
   const appointmentsByDate = ref([]);
   onMounted(() => {
@@ -24,7 +25,24 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     //Obtenemos las citas
     const { data } = await AppointmentAPI.getByDate(date.value);
     appointmentsByDate.value = data;
+    if (appointmentId.value) {
+      appointmentsByDate.value = data.filter(
+        (appointment) => appointment._id !== appointmentId.value
+      );
+      time.value = data.filter(
+        (appointment) => appointment._id === appointmentId.value
+      )[0].time;
+    } else {
+      appointmentsByDate.value = data;
+    }
   });
+  function setSelectedAppointment(appointment) {
+    services.value = appointment.services;
+    date.value = convertToDDMMYYYY(appointment.date);
+    time.value = appointment.time;
+    appointmentId.value = appointment._id;
+    console.log(appointmentId.value);
+  }
   function onServiceSelected(service) {
     if (
       services.value.some(
@@ -94,6 +112,7 @@ export const useAppointmentsStore = defineStore("appointments", () => {
     services,
     totalAmount,
     noServicesSelected,
+    setSelectedAppointment,
     date,
     hours,
     time,

@@ -1,13 +1,18 @@
 <script setup>
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { onMounted } from "vue";
+import AppointmentAPI from "@/api/AppointmentAPI";
+import { useAppointmentsStore } from "@/stores/Appointments";
+const appointments = useAppointmentsStore();
 const route = useRoute();
+const router = useRouter();
 const { id } = route.params;
 onMounted(async () => {
   try {
-    console.log(id);
+    const { data } = await AppointmentAPI.getById(id);
+    appointments.setSelectedAppointment(data);
   } catch (error) {
-    console.log(error);
+    router.push({ name: "my-appointments" });
   }
 });
 </script>
