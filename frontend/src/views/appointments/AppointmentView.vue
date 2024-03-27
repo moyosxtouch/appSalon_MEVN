@@ -3,8 +3,10 @@ import VueTailwindDatepicker from "vue-tailwind-datepicker";
 import SelectedService from "@/components/SelectedService.vue";
 import { formatCurrency } from "@/helpers";
 import { useAppointmentsStore } from "@/stores/Appointments";
+
 import { ref } from "vue";
 const appointments = useAppointmentsStore();
+
 const formatter = ref({
   date: "DD/MM/YYYY",
   month: "MMM",
@@ -80,7 +82,7 @@ const disableDate = (date) => {
     <div v-if="appointments.isValidReservation" class="flex justify-end">
       <button
         class="w-full md:w-auto bg-violet-500 p-3 rounded-lg uppercase font-black text-white"
-        @click="appointments.createAppointment"
+        @click="appointments.saveAppointment"
       >
         Confirmar Reservación
       </button>

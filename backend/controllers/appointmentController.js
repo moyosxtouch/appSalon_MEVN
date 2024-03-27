@@ -1,13 +1,27 @@
 import Appointment from "../models/Appointment.js";
 import { parse, formatISO, startOfDay, endOfDay, isValid } from "date-fns";
-import { handleNotFoundError, validateObjectId } from "../utils/index.js";
+import {
+  handleNotFoundError,
+  validateObjectId,
+  formatDate,
+} from "../utils/index.js";
+import {
+  sendEmailNewAppointment,
+  sendEmailUpdateAppointment,
+  sendEmailCancelledAppointment,
+} from "../emails/appointmentEmailServices.js";
 const createAppointment = async (req, res) => {
   const appointment = req.body;
   appointment.user = req.user._id.toString();
 
   try {
     const newAppointment = new Appointment(appointment);
-    await newAppointment.save();
+    const result = await newAppointment.save();
+    await sendEmailNewAppointment({
+      date: formatDate(result.date),
+      time: result.time,
+    });
+
     res.json({
       msg: "Tu Reservación se realizó Correctamente",
     });
@@ -68,9 +82,42 @@ const updateAppointment = async (req, res) => {
   appointment.services = services;
   try {
     const result = await appointment.save();
+    await sendEmailUpdateAppointment({
+      date: formatDate(result.date),
+      time: result.time,
+    });
     res.json({
       msg: "Cita Actualizada Correctamente",
     });
+  } catch (error) {
+    console.log(error);
+  }
+};
+const deleteAppointment = async (req, res) => {
+  const { id } = req.params;
+  //validar por object id
+  if (validateObjectId(id, res)) return;
+  //validar que exista
+  const appointment = await Appointment.findById(id).populate("services");
+  if (!appointment) {
+    return handleNotFoundError("La Cita no existe", res);
+  }
+  if (appointment.user.toString() !== req.user._id.toString()) {
+    const error = new Error("no tienes los permisos");
+    return res.status(403).json({ msg: error.message });
+  }
+  //guardar datos antes de eliminar
+  const appointmentDetails = {
+    date: appointment.date,
+    time: appointment.time,
+  };
+  try {
+    const result = await appointment.deleteOne();
+    await sendEmailCancelledAppointment({
+      date: formatDate(appointmentDetails.date),
+      time: appointmentDetails.time,
+    });
+    res.json({ msg: "Cita Cancelada Exitosamente" });
   } catch (error) {
     console.log(error);
   }
@@ -80,4 +127,5 @@ export {
   getAppointmentsByDate,
   getAppointmentById,
   updateAppointment,
+  deleteAppointment,
 };
